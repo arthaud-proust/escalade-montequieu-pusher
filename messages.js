@@ -1,5 +1,4 @@
 const Dispatcher = require('./dispatcher');
-const RandExp = require('randexp');
 
 module.exports = class Messages extends Dispatcher {
     /*
