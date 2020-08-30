@@ -24,4 +24,4 @@ app.use(timeout('1h'));     // set timeout to 1hour
 //routes
 require('./routes')(router);          
 
-app.listen(process.env.port || 80);
+app.listen(process.env.port || 8001);
