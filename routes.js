@@ -15,7 +15,6 @@ const postMessage = {
 }
 
 module.exports = function(router) {
-    
     router.get('/', cors(getMessages), (req, res)=>messages.fetch(req, res));
     router.post('/', cors(postMessage), (req, res)=>messages.post(req, res));
     router.get('/test', (req, res)=>res.send("ok"));
