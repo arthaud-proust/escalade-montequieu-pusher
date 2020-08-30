@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node app.js"
   },
+  "engines": {
+    "node": "12.14.x"
+  },
   "author": "arthaud",
   "license": "ISC",
   "dependencies": {
