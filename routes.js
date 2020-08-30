@@ -1,27 +1,22 @@
-const Messages = require('./messages.js')
+const cors = require('cors')
 const path = require('path')
+const Messages = require('./messages.js')
 const messages = new Messages();
 
+const getMessages = {
+    origin: process.env.ALLOW_READ_MESSAGE_FROM || "*",
+    methods: "GET,HEAD",
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+const postMessage = {
+    origin: process.env.ALLOW_POST_MESSAGE_FROM || "escalade-montesquieu.fr",
+    methods: "POST",
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
 module.exports = function(router) {
-
-    // middleware that is specific to this router
-    router.use(function timeLog(req, res, next) {
-        console.log((new Date()).toLocaleTimeString('fr-FR', {minute: '2-digit', hour: '2-digit', second:'2-digit'})+': '+req.path);
-        // console.log(req.path);
-        next();
-    });
-
-    // router.get('/:room', function(req, res) {
-    //     res.sendFile(path.join(__dirname+'/views/chat.html'));
-    //     // if(messages.rooms.includes(req.params.room)) {
-    //     // } else {
-    //         // res.redirect('/404');
-    //         // res.sendFile(path.join(__dirname+'/views/404.html'));
-    //     // }
-    // });
     
-    
-    router.get('/', (req, res)=>messages.fetch(req, res));
-    router.post('/', (req, res)=>messages.post(req, res));
+    router.get('/', cors(getMessages), (req, res)=>messages.fetch(req, res));
+    router.post('/', cors(postMessage), (req, res)=>messages.post(req, res));
     router.get('/test', (req, res)=>res.send("ok"));
 };
