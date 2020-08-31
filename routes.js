@@ -15,7 +15,10 @@ const postMessage = {
 }
 
 module.exports = function(router) {
-    router.use(cors()); 
+    router.use(cors({
+        methods: "GET,HEAD,POST",
+        maxAge: 600
+    }));  
     router.get('/', (req, res)=>messages.fetch(req, res));
     router.post('/', (req, res)=>messages.post(req, res));
     router.get('/test', (req, res)=>res.sendFile(path.join(__dirname+'/views/test.html')));

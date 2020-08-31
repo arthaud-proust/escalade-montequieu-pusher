@@ -19,7 +19,10 @@ app.use(express.static(__dirname + '/public'));     // Store all assets files in
 app.use(express.static(__dirname + '/views'));      // Store all HTML files in view folder.
 app.use(express.static(__dirname + '/scripts'));    // Store all JS and CSS in Scripts folder.
 
-app.use(cors()); 
+app.use(cors({
+    methods: "GET,HEAD,POST",
+    maxAge: 600
+})); 
 app.use('/', router);       // add the router
 app.use(timeout('1h'));     // set timeout to 1hour
 
