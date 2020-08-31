@@ -13,12 +13,14 @@ const postMessage = {
     methods: "POST",
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
+const corsRules ={
+    origin: process.env.ALLOW_READ_MESSAGE_FROM || "*",
+    methods: "GET,HEAD,POST",
+    maxAge: 600
+};
 
 module.exports = function(router) {
-    router.use(cors({
-        methods: "GET,HEAD,POST",
-        maxAge: 600
-    }));  
+    router.use(cors(corsRules));  
     router.post('/fetch', (req, res)=>messages.fetch(req, res));
     router.post('/post', (req, res)=>messages.post(req, res));
     router.get('/test', (req, res)=>res.sendFile(path.join(__dirname+'/views/test.html')));
