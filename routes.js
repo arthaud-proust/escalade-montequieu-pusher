@@ -20,6 +20,6 @@ module.exports = function(router) {
         maxAge: 600
     }));  
     router.post('/fetch', (req, res)=>messages.fetch(req, res));
-    router.post('/postt', (req, res)=>messages.post(req, res));
+    router.post('/post', (req, res)=>messages.post(req, res));
     router.get('/test', (req, res)=>res.sendFile(path.join(__dirname+'/views/test.html')));
 };
