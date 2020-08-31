@@ -16,10 +16,10 @@ app.use(upload.array());
 
 //add the router folders
 app.use(express.static(__dirname + '/public'));     // Store all assets files in public folder.
-// app.use(express.static(__dirname + '/views'));      // Store all HTML files in view folder.
+app.use(express.static(__dirname + '/views'));      // Store all HTML files in view folder.
 app.use(express.static(__dirname + '/scripts'));    // Store all JS and CSS in Scripts folder.
 
-app.options('*', cors())
+app.use(cors()); 
 app.use('/', router);       // add the router
 app.use(timeout('1h'));     // set timeout to 1hour
 
