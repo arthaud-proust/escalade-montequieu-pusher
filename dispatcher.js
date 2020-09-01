@@ -9,6 +9,7 @@ module.exports = class Dispatcher {
     }
 
     post(req, res) {
+        console.log(req.connection.remoteAddress);
         this.functionPost(req, res);
         
         this.clients.forEach( client=>this.callback(client) );
