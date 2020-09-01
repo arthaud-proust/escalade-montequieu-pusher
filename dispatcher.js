@@ -1,3 +1,4 @@
+require('dotenv').config()
 
 // abstract Dispatcher
 module.exports = class Dispatcher {
@@ -9,12 +10,15 @@ module.exports = class Dispatcher {
     }
 
     post(req, res) {
-        console.log(req.ip);
-        this.functionPost(req, res);
+        if(req.body.key !== process.env.PUSH_KEY) {
+            res.status(401).send("invalid key");
+        } else {
+            this.functionPost(req, res);
         
-        this.clients.forEach( client=>this.callback(client) );
-        this.clients = [];
-        res.status(200).send("done");
+            this.clients.forEach( client=>this.callback(client) );
+            this.clients = [];
+            res.status(200).send("done");
+        }
     }
 
     fetch(req, res) {
