@@ -9,7 +9,7 @@ module.exports = class Dispatcher {
     }
 
     post(req, res) {
-        console.log(req.connection.remoteAddress);
+        console.log(req.ip);
         this.functionPost(req, res);
         
         this.clients.forEach( client=>this.callback(client) );
