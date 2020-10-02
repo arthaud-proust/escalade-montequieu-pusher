@@ -84,4 +84,4 @@ app.get("/notif", (req, res) => {
     
 });
 
-app.listen(process.env.PORT || 8001, process.env.HOST || 'localhost');
+app.listen(process.env.PORT || 8001);
