@@ -2,7 +2,7 @@ console.log("Service Worker Loaded...");
 
 self.addEventListener("push", (e) => {
 	const data = e.data.json();
-	console.log("Push Recieved...");
+	// console.log("Push Recieved...");
 	self.registration.getNotifications()
         .then(function (notifications) {
 			notifications.filter(notification=>notification.data.forum==data.forum).forEach(notification => notification.close());

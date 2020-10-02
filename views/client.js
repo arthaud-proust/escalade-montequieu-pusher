@@ -15,7 +15,7 @@ function onRegistration(registration) {
 	}
   
 	if (registration.active) {
-	  	console.log('active', registration.active);		registration.active.addEventListener('statechange', onStateChange('active', registration));
+		registration.active.addEventListener('statechange', onStateChange('active', registration));
 	}
   }
   
@@ -57,7 +57,7 @@ function registerPush(register) {
 
 async function send() {
 	// Register Service Worker
-	console.log("Registering service worker...");
+	// console.log("Registering service worker...");
 
 	navigator.serviceWorker.register("/worker.js", {
 		scope: "/",
