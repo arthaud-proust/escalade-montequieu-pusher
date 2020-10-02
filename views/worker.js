@@ -3,10 +3,8 @@ console.log("Service Worker Loaded...");
 self.addEventListener("push", (e) => {
 	const data = e.data.json();
 	console.log("Push Recieved...");
-	console.log(data);
 	self.registration.getNotifications()
         .then(function (notifications) {
-			console.log(notifications);
 			notifications.filter(notification=>notification.data.forum==data.forum).forEach(notification => notification.close());
 			self.registration.showNotification(`${data.author} - ${data.forum.charAt(0).toUpperCase() +data.forum.slice(1).replace(/-/g, ' ')}`, {
 				body: data.content,
@@ -26,7 +24,6 @@ self.addEventListener("push", (e) => {
 
 
 self.onnotificationclick = function(event) {
-	console.log('On notification click: ', event.notification.tag);
 	event.notification.close();
   
 	// This looks to see if the current is already open and

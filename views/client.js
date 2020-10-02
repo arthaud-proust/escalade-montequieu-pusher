@@ -5,35 +5,6 @@ if ("serviceWorker" in navigator) {
 	send().catch(e => console.error(e));
 }
 
-// Register SW, Register Push, Send Push
-// async function send() {
-// 	// Register Service Worker
-// 	console.log("Registering service worker...");
-// 	const register = await navigator.serviceWorker.register("/worker.js", {
-// 		scope: "/",
-// 	});
-// 	console.log("Service Worker Registered...");
-
-// 	// Register Push
-// 	console.log("Registering Push...");
-// 	const subscription = await register.pushManager.subscribe({
-// 		userVisibleOnly: true,
-// 		applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
-// 	});
-// 	console.log("Push Registered...");
-
-// 	// Send Push Notification
-// 	console.log("Sending Push...");
-// 	await fetch("/subscribe", {
-// 		method: "POST",
-// 		body: JSON.stringify(subscription),
-// 		headers: {
-// 			"content-type": "application/json",
-// 		},
-// 	});
-// 	console.log("Push Sent...");
-// }
-
 function onRegistration(registration) {
 	if (registration.waiting) {
 	  	registration.waiting.addEventListener('statechange', onStateChange('waiting', registration));
@@ -50,7 +21,6 @@ function onRegistration(registration) {
   
 function onStateChange(from, registration) {
 	return function(e) {
-	  	// console.log('statechange initial state ', from, 'changed to', e.target.state);
 	  	if(e.target.state == 'activated') {
 			registerPush(registration);
 	  	}
@@ -58,29 +28,30 @@ function onStateChange(from, registration) {
 }
 
 function registerPush(register) {
-	console.log("Service Worker Registered...");
+	// console.log("Service Worker Registered...");
 
 	// Register Push
-	console.log("Registering Push...");
+	// console.log("Registering Push...");
 	const subscription = register.pushManager.subscribe({
 		userVisibleOnly: true,
 		applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
 	});
 
 	subscription.then(function(subscription) {
-		console.log("Push Registered...");
+		// console.log("Push Registered...");
 
 		// Send Push Notification
-		console.log("Sending Push...");
+		// console.log("Sending Push...");
 		fetch("/subscribe", {
 			method: "POST",
 			body: JSON.stringify(subscription),
 			headers: {
 				"content-type": "application/json",
 			},
-		}).then(function() {
-			console.log("Push Sent...");
 		})
+		// .then(function() {
+			// console.log("Push Sent...");
+		// })
 	})
 }
 
