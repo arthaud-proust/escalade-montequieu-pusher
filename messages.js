@@ -15,11 +15,12 @@ module.exports = class Messages extends Dispatcher {
         
     */
 
-    constructor() {
+    constructor(webpush) {
         super();  // super() renvoie à l'abstract
+        this.webpush = webpush;
         this.messages = [];
         this.forums = [];
-        this.forum
+        this.forum;
     }
 
     condition(req, res) {

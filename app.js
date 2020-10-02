@@ -1,20 +1,28 @@
 const express = require('express')
+const webpush = require("web-push")
 const app = express()
-const router = express.Router()
 const bodyParser = require('body-parser')
-const timeout = require('connect-timeout'); //express v4
-const multer = require('multer');
-const upload = multer();
-const cors = require('cors');
+const timeout = require('connect-timeout') //express v4
+const multer = require('multer')
+const upload = multer()
+const cors = require('cors')
+const path = require('path')
+
 const corsRules ={
     origin: process.env.ALLOW_READ_MESSAGE_FROM || "*",
     methods: "GET,HEAD,POST",
     maxAge: 600
 };
 
-const path = require('path')
 const Messages = require('./messages.js')
-const messages = new Messages();
+const messages = new Messages(webpush);
+
+// let subscriptions = {};
+const publicVapidKey = process.env.PUBLIC_VAPID_KEY;
+const privateVapidKey = process.env.PRIVATE_VAPID_KEY;
+const subjectVapid = process.env.SUBJECT_VAPID;
+webpush.setVapidDetails(subjectVapid, publicVapidKey, privateVapidKey);
+
 
 // support request
 app.use(bodyParser.json());                         // to support JSON-encoded bodies
@@ -31,16 +39,49 @@ app.use(express.static(__dirname + '/scripts'));    // Store all JS and CSS in S
 
 
 /* ---- routes ---- */
-// app.use(cors({
-//     methods: "GET,HEAD,POST",
-//     maxAge: 600
-// })); 
-// app.use('/', router);       // add the router
-// require('./routes')(router);          
-
 app.use(cors(corsRules));  
 app.post('/fetch', (req, res)=>messages.fetch(req, res));
 app.post('/post', (req, res)=>messages.post(req, res));
-// app.get('/test', (req, res)=>res.sendFile(path.join(__dirname+'/views/test.html')));
+app.get('/test', (req, res)=>res.sendFile(path.join(__dirname+'/views/test.html')));
 
-app.listen(process.env.PORT || 8001);
+
+
+// Subscribe Route
+app.post("/subscribe", (req, res) => {
+	// Get pushSubscription object
+	const subscription = req.body;
+    messages.subscriptions[subscription.keys.auth]=subscription;
+    console.log(subscription);
+	// Send 201 - resource created
+	res.status(201).json({});
+
+	// Create payload
+	// const payload = JSON.stringify({ 
+    //     title: "Push Test", 
+    //     body: 'Test'
+    // });
+        
+    // // Pass object into sendNotification
+	// webpush
+	// 	.sendNotification(subscription, payload)
+	// 	.catch((err) => console.error(err));
+});
+
+app.get("/notif", (req, res) => {
+
+    const payload = JSON.stringify({ 
+        title: "Push Test", 
+        body: 'Test'
+    });
+
+    res.status(201).json({});
+
+    Object.values(subscriptions).forEach(subscription=>{
+        webpush
+            .sendNotification(subscription, payload)
+            .catch((err) => console.error(err));
+    });
+    
+});
+
+app.listen(process.env.PORT || 8001, process.env.HOST || 'localhost');
