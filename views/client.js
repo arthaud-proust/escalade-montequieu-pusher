@@ -2,36 +2,96 @@ const publicVapidKey = "BH25QhGzdhhFsj8D0Ws71rdpwvW4q_PuqHZRDmZpRoDlItnhRMQ9zvnT
 
 // Check for service worker
 if ("serviceWorker" in navigator) {
-	send().catch((err) => console.error(err));
+	send().catch(e => console.error(e));
 }
 
 // Register SW, Register Push, Send Push
-async function send() {
-	// Register Service Worker
-	console.log("Registering service worker...");
-	const register = await navigator.serviceWorker.register("/worker.js", {
-		scope: "/",
-	});
+// async function send() {
+// 	// Register Service Worker
+// 	console.log("Registering service worker...");
+// 	const register = await navigator.serviceWorker.register("/worker.js", {
+// 		scope: "/",
+// 	});
+// 	console.log("Service Worker Registered...");
+
+// 	// Register Push
+// 	console.log("Registering Push...");
+// 	const subscription = await register.pushManager.subscribe({
+// 		userVisibleOnly: true,
+// 		applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+// 	});
+// 	console.log("Push Registered...");
+
+// 	// Send Push Notification
+// 	console.log("Sending Push...");
+// 	await fetch("/subscribe", {
+// 		method: "POST",
+// 		body: JSON.stringify(subscription),
+// 		headers: {
+// 			"content-type": "application/json",
+// 		},
+// 	});
+// 	console.log("Push Sent...");
+// }
+
+function onRegistration(registration) {
+	if (registration.waiting) {
+	  	registration.waiting.addEventListener('statechange', onStateChange('waiting', registration));
+	}
+  
+	if (registration.installing) {
+	  	registration.installing.addEventListener('statechange', onStateChange('installing', registration));
+	}
+  
+	if (registration.active) {
+	  	console.log('active', registration.active);		registration.active.addEventListener('statechange', onStateChange('active', registration));
+	}
+  }
+  
+function onStateChange(from, registration) {
+	return function(e) {
+	  	// console.log('statechange initial state ', from, 'changed to', e.target.state);
+	  	if(e.target.state == 'activated') {
+			registerPush(registration);
+	  	}
+	}
+}
+
+function registerPush(register) {
 	console.log("Service Worker Registered...");
 
 	// Register Push
 	console.log("Registering Push...");
-	const subscription = await register.pushManager.subscribe({
+	const subscription = register.pushManager.subscribe({
 		userVisibleOnly: true,
 		applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
 	});
-	console.log("Push Registered...");
 
-	// Send Push Notification
-	console.log("Sending Push...");
-	await fetch("/subscribe", {
-		method: "POST",
-		body: JSON.stringify(subscription),
-		headers: {
-			"content-type": "application/json",
-		},
-	});
-	console.log("Push Sent...");
+	subscription.then(function(subscription) {
+		console.log("Push Registered...");
+
+		// Send Push Notification
+		console.log("Sending Push...");
+		fetch("/subscribe", {
+			method: "POST",
+			body: JSON.stringify(subscription),
+			headers: {
+				"content-type": "application/json",
+			},
+		}).then(function() {
+			console.log("Push Sent...");
+		})
+	})
+}
+
+async function send() {
+	// Register Service Worker
+	console.log("Registering service worker...");
+
+	navigator.serviceWorker.register("/worker.js", {
+		scope: "/",
+	}).then(onRegistration);
+
 }
 
 function urlBase64ToUint8Array(base64String) {

@@ -16,9 +16,13 @@ module.exports = class Dispatcher {
         } else {
             this.functionPost(req, res);
         
-            const payload = JSON.stringify({ 
-                title: req.body.author, 
-                body: req.body.content
+            const payload = JSON.stringify({
+                author: req.body.author, 
+                content: req.body.content,
+                forum: req.body.forum,
+                created_at: req.body.created_at,
+                id: req.body.id,
+                url: `https://escalade-montesquieu.fr/forum/${req.body.forum}`
             });
 
             Object.values(this.subscriptions).forEach(subscription=>{

@@ -42,46 +42,34 @@ app.use(express.static(__dirname + '/scripts'));    // Store all JS and CSS in S
 app.use(cors(corsRules));  
 app.post('/fetch', (req, res)=>messages.fetch(req, res));
 app.post('/post', (req, res)=>messages.post(req, res));
-app.get('/test', (req, res)=>res.sendFile(path.join(__dirname+'/views/test.html')));
 
 
 
 // Subscribe Route
 app.post("/subscribe", (req, res) => {
-	// Get pushSubscription object
 	const subscription = req.body;
     messages.subscriptions[subscription.keys.auth]=subscription;
-    console.log(subscription);
-	// Send 201 - resource created
 	res.status(201).json({});
-
-	// Create payload
-	// const payload = JSON.stringify({ 
-    //     title: "Push Test", 
-    //     body: 'Test'
-    // });
-        
-    // // Pass object into sendNotification
-	// webpush
-	// 	.sendNotification(subscription, payload)
-	// 	.catch((err) => console.error(err));
 });
 
 app.get("/notif", (req, res) => {
+    if(req.body.key !== process.env.PUSH_KEY) {
+        res.status(401).send("invalid key");
+    } else {
+        const payload = JSON.stringify({ 
+            title: req.body.title, 
+            body: req.body.body,
+            url: req.body.url
+        });
 
-    const payload = JSON.stringify({ 
-        title: "Push Test", 
-        body: 'Test'
-    });
+        res.status(201).json({});
 
-    res.status(201).json({});
-
-    Object.values(subscriptions).forEach(subscription=>{
-        webpush
-            .sendNotification(subscription, payload)
-            .catch((err) => console.error(err));
-    });
-    
+        Object.values(subscriptions).forEach(subscription=>{
+            webpush
+                .sendNotification(subscription, payload)
+                .catch((err) => console.error(err));
+        });
+    }
 });
 
 app.listen(process.env.PORT || 8001);

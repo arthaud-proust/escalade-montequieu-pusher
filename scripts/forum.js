@@ -1,8 +1,8 @@
 const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
 // window._pusher_host="http://192.168.1.20:8001";
-// window._pusher_host="http://localhost:8001";
-window._pusher_host="https://test-arthaud.herokuapp.com";
+window._pusher_host="http://localhost:8001";
+// window._pusher_host="https://test-arthaud.herokuapp.com";
 try {
     window._last_message_id = window._messages[window._messages.length-1].id;
 } catch(e) {
