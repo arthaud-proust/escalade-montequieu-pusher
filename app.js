@@ -42,15 +42,8 @@ app.use(express.static(__dirname + '/scripts'));    // Store all JS and CSS in S
 app.use(cors(corsRules));  
 app.post('/fetch', (req, res)=>messages.fetch(req, res));
 app.post('/post', (req, res)=>messages.post(req, res));
-
-
-
 // Subscribe Route
-app.post("/subscribe", (req, res) => {
-	const subscription = req.body;
-    messages.subscriptions[subscription.keys.auth]=subscription;
-	res.status(201).json({});
-});
+app.post("/subscribe", (req, res) => messages.subscribe(req, res));
 
 app.get("/notif", (req, res) => {
     if(req.body.key !== process.env.PUSH_KEY) {
