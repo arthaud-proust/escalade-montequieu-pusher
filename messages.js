@@ -23,6 +23,20 @@ module.exports = class Messages extends Dispatcher {
         this.forum;
     }
 
+    lastMessagesId(req, res) {
+        /*
+        forums = {
+            forumName1: lastId(Number),
+            forumName2: lastId(Number),
+            ...
+        }
+        */
+        for (const [forumName, lastId] of Object.entries(req.body.forums)) {
+            req.body.forums[forumName] = (lastId < Math.max.apply(Math, this.messages.filter(msg => msg.forum == forumName).map(msg=>msg.id)))
+        }
+        res.send(req.body.forums);
+    }
+
     condition(req, res) {
         let messages = this.messages.filter(msg => msg.forum == req.body.forum)
         if (messages.length == 0) return false

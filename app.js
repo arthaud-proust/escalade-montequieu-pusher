@@ -41,6 +41,7 @@ app.use(express.static(__dirname + '/scripts'));    // Store all JS and CSS in S
 /* ---- routes ---- */
 app.use(cors(corsRules));  
 app.post('/fetch', (req, res)=>messages.fetch(req, res));
+app.post('/last-messages-id', (req, res)=>messages.lastMessagesId(req, res))
 app.post('/post', (req, res)=>messages.post(req, res));
 // Subscribe Route
 app.post("/subscribe", (req, res) => messages.subscribe(req, res));
