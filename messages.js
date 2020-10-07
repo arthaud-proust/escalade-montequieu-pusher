@@ -1,4 +1,5 @@
 const Dispatcher = require('./dispatcher');
+const Datastore = require('nedb');
 
 module.exports = class Messages extends Dispatcher {
     /*
@@ -19,20 +20,28 @@ module.exports = class Messages extends Dispatcher {
         super();  // super() renvoie à l'abstract
         this.webpush = webpush;
         this.messages = [];
-        this.forums = [];
+        this.forums = {};
         this.forum;
+
+        this.db_forums = new Datastore({ filename: './forums.db', autoload: true });
+        this.db_forums.find({}, (err, forums)=>{
+            forums.forEach(forum=>{
+                this.forums[forum.name]=forum.last_message;
+            })
+        });
     }
 
-    lastMessagesId(req, res) {
+    lastMessages(req, res) {
         /*
         forums = {
-            forumName1: lastId(Number),
-            forumName2: lastId(Number),
+            forumName1: lastCreated_at(timestamp),
+            forumName2: lastCreated_at(timestamp),
             ...
         }
         */
-        for (const [forumName, lastId] of Object.entries(req.body.forums)) {
-            req.body.forums[forumName] = (lastId < Math.max.apply(Math, this.messages.filter(msg => msg.forum == forumName).map(msg=>msg.id)))
+        for (const [forumName, lastCreated_at] of Object.entries(req.body.forums)) {
+            // req.body.forums[forumName] = (actual < Math.max.apply(Math, this.messages.filter(msg => msg.forum == forumName).map(msg=>(new Date(msg.created_at)).getTime())))
+            req.body.forums[forumName] = lastCreated_at < this.forums[forumName]
         }
         res.send(req.body.forums);
     }
@@ -50,6 +59,9 @@ module.exports = class Messages extends Dispatcher {
     functionPost(req, res) {
         const {forum, id, author, author_uuid, content, created_at} = req.body;
         this.messages.push({forum, id, author, author_uuid, content, created_at});
+        this.forums[forum]=(new Date(created_at)).getTime();
+        this.db_forums.update({ name: forum }, { $set: { last_message:(new Date(created_at)).getTime()} }, { upsert: true });
+        
         // this.messages.push({forum: req.body.forum, author: req.body.author, author_uuid: req.body.author_uuid, content: req.body.content, id: req.body.id, created_at: req.body.created_at});
     }
 

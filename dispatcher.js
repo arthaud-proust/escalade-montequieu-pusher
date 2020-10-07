@@ -9,6 +9,7 @@ module.exports = class Dispatcher {
         }
         this.clients = [];
         this.db = new Datastore({ filename: './subscriptions.db', autoload: true });
+        this.db.persistence.setAutocompactionInterval( 5000 /*ms*/ )
         this.subscriptions = {};
         this.db.find({}, (err, docs)=>{
             docs.forEach(doc=>{
