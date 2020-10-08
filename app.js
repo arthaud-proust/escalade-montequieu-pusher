@@ -49,19 +49,7 @@ app.use(express.static(__dirname + '/scripts'));    // Store all JS and CSS in S
 app.use(cors(corsRules));  
 app.post('/fetch', (req, res)=>messages.fetch(req, res));
 app.post('/last-messages', (req, res)=>messages.lastMessages(req, res))
-app.get('/last-messages', (req, res)=>{
-    let dates = [];
-    for(const [forum, lastMessage] of Object.entries(messages.forums)) {
-        dates.push({
-            name:forum, 
-            last : {
-                timestamp: lastMessage,
-                date: messages.getDate(lastMessage)
-            }
-        })
-    }
-    res.send(dates);
-})
+app.get('/last-messages', (req, res)=>res.send(messages.forums))
 app.get('/forums', (req, res)=>res.send(Object.keys(messages.forums)))
 app.post('/post', (req, res)=>messages.post(req, res));
 // Subscribe Route

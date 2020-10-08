@@ -65,8 +65,8 @@ module.exports = class Messages extends Dispatcher {
     functionPost(req, res) {
         const {forum, id, author, author_uuid, content, created_at} = req.body;
         this.messages.push({forum, id, author, author_uuid, content, created_at});
-        this.forums[forum]=(new Date(created_at)).getTime();
-        this.db_forums.update({ name: forum }, { $set: { last_message:(new Date(created_at)).getTime()} }, { upsert: true });
+        this.forums[forum]=created_at;
+        this.db_forums.update({ name: forum }, { $set: { last_message:created_at} }, { upsert: true });
         
         // this.messages.push({forum: req.body.forum, author: req.body.author, author_uuid: req.body.author_uuid, content: req.body.content, id: req.body.id, created_at: req.body.created_at});
     }
