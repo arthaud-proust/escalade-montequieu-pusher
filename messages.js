@@ -27,8 +27,14 @@ module.exports = class Messages extends Dispatcher {
         this.db_forums.find({}, (err, forums)=>{
             forums.forEach(forum=>{
                 this.forums[forum.name]=forum.last_message;
+                console.log(this.getDate(forum.last_message));
             })
         });
+    }
+
+    getDate(date) {
+        date = new Date(date)
+        return`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     }
 
     lastMessages(req, res) {

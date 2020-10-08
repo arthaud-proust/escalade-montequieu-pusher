@@ -37,14 +37,32 @@ app.use(express.static(__dirname + '/public'));     // Store all assets files in
 app.use(express.static(__dirname + '/views'));      // Store all HTML files in view folder.
 app.use(express.static(__dirname + '/scripts'));    // Store all JS and CSS in Scripts folder.
 
+// let actual = new Date(1602111646000);
+// let act = `${actual.getFullYear()}-${actual.getMonth()+1}-${actual.getDate()} ${actual.getHours()}:${actual.getMinutes()}:${actual.getSeconds()}`;
+// console.log((new Date(act)).getTime());
+
+// actual = new Date(1602104446000);
+// console.log(`${actual.getFullYear()}-${actual.getMonth()+1}-${actual.getDate()} ${actual.getHours()}:${actual.getMinutes()}:${actual.getSeconds()}`);
+
 
 /* ---- routes ---- */
 app.use(cors(corsRules));  
 app.post('/fetch', (req, res)=>messages.fetch(req, res));
 app.post('/last-messages', (req, res)=>messages.lastMessages(req, res))
 app.get('/last-messages', (req, res)=>{
-    res.send(messages.forums);
+    let dates = [];
+    for(const [forum, lastMessage] of Object.entries(messages.forums)) {
+        dates.push({
+            name:forum, 
+            last : {
+                timestamp: lastMessage,
+                date: messages.getDate(lastMessage)
+            }
+        })
+    }
+    res.send(dates);
 })
+app.get('/forums', (req, res)=>res.send(Object.keys(messages.forums)))
 app.post('/post', (req, res)=>messages.post(req, res));
 // Subscribe Route
 app.post("/subscribe", (req, res) => messages.subscribe(req, res));
