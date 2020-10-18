@@ -1,5 +1,5 @@
 require('dotenv').config()
-const Datastore = require('nedb');
+const Axios = require('axios');
 
 // abstract Dispatcher
 module.exports = class Dispatcher {
@@ -8,22 +8,37 @@ module.exports = class Dispatcher {
             throw new TypeError('Abstract class "Dispatcher" cannot be instantiated directly');
         }
         this.clients = [];
-        this.db = new Datastore({ filename: './subscriptions.db', autoload: true });
-        this.db.persistence.setAutocompactionInterval( 5000 /*ms*/ )
         this.subscriptions = {};
-        this.db.find({}, (err, docs)=>{
-            docs.forEach(doc=>{
-                this.subscriptions[doc.keys.auth]=doc;
+        Axios({
+            method: 'post',
+            url: `${process.env.SERVER_HOST}/api/subscription/all`,
+            data: {key:process.env.PUSH_KEY}
+        })
+        .then(r=>{
+            r.data.subscriptions.forEach(subscription=>{
+                this.subscriptions[subscription.auth]={...subscription, keys:JSON.parse(subscription.keys)}
             })
-        });
+            console.log(this);
+
+        })
+        .catch(e=>console.log(e))
 
     }
+
     subscribe(req, res) {
         const subscription = req.body;
         this.subscriptions[subscription.keys.auth]=subscription;
-        this.db.insert(subscription, function (err, newDoc) {   
-            res.status(201).json({});
-        });
+        console.log(subscription);
+        Axios({
+            method: 'post',
+            url: `${process.env.SERVER_HOST}/api/subscription`,
+            data: {
+                key: process.env.PUSH_KEY,
+                auth: subscription.keys.auth,
+                endpoint: subscription.endpoint,
+                keys: JSON.stringify(subscription.keys)
+            }
+        })
     }
 
     post(req, res) {
@@ -45,9 +60,17 @@ module.exports = class Dispatcher {
                 this.webpush
                     .sendNotification(subscription, payload)
                     .catch((err) => {
+                        console.log(err)
                         if(err.body == 'push subscription has unsubscribed or expired.\n') {
                             delete this.subscriptions[subscription.keys.auth];
-                            this.db.remove({ 'keys.auth': subscription.keys.auth }, { multi: true });                              
+                            Axios({
+                                method: 'delete',
+                                url: `${process.env.SERVER_HOST}/api/subscription`,
+                                data: {
+                                    key: process.env.PUSH_KEY,
+                                    auth: subscription.keys.auth,
+                                }
+                            })
                         }
                     });
             })
