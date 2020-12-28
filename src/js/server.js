@@ -4,7 +4,7 @@ const http = require("http");
 const path = require("path");
 const router = express.Router()
 const bodyParser = require('body-parser');
-
+const cors = require('cors');
 
 module.exports = class Server {
 
@@ -54,7 +54,13 @@ module.exports = class Server {
         this.app.use(bodyParser.urlencoded({ extended: true })); // to support URL-encoded bodies
         this.app.use(express.json());                            // to support JSON-encoded bodies
         this.app.use(express.urlencoded());                      // to support URL-encoded bodies
-
+        
+        const corsOptions = {
+            origin: '*',
+            optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+        }
+        this.app.use(cors(corsOptions))
+        
         //add the router folders
         this.app.use(express.static(__dirname + '/../../public'));             // Store all assets, js and css files in public folder.
         this.app.use(express.static(__dirname + '/../../resources/views'));    // Store all HTML files in view folder.
