@@ -60,6 +60,7 @@ module.exports = class Server {
             optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
         }
         this.app.use(cors(corsOptions))
+        this.app.options('*', cors());
         
         //add the router folders
         this.app.use(express.static(__dirname + '/../../public'));             // Store all assets, js and css files in public folder.
