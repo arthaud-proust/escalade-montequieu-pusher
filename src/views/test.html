@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Display Webcam Stream</title>
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0">
+        <script>
+            try{var link=document.createElement('link');link.rel='stylesheet';if(window.screen.width < 768) {link.href="/css/mobile.css";} else {link.href="/css/large.css";}document.getElementsByTagName('head')[0].appendChild(link);link.addEventListener('load', function () {document.querySelector('body').setAttribute('class', '');})}catch(e) {document.querySelector('body').setAttribute('class', '')}
+        </script>
+        <script src="/js/socket.io.min.js"></script>
+        <style>
+            body.loading::before {
+                font-family: Arial, Helvetica, sans-serif;
+                z-index: 2000;
+                font-size: 3rem;
+                content: 'Share things';
+                background: #121215;
+                color: #f89345;
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 100vw;
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+                justify-content: center;
+            }
+        </style>
+    </head>
+ 
+    <body class="loading">
+        <div id="menu">
+            <img id="toggle-menu" src="/assets/menu.svg">
+            <div class="menu-items">
+                <span id="leave-session">Leave room</span>
+            </div>
+        </div>
+        <div id="users" class="open">
+            <img id="toggle-users" src="/assets/users.svg">
+            <div id="users-list"></div>
+        </div>
+        <main>
+            <div class="container messages open" id="chat">
+                <div id="messages"></div>
+                <div id="writings"></div>
+                <div id="message-form">
+                    <input id="input" placeholder="Message">
+                    <button id="send">
+                        <img class="d-md-none d-inline pr-1" src="/assets/send.svg" alt=">">
+                    </button>
+                </div>
+            </div>
+        </main>
+        <script src="/js/base.js"></script>
+        <script src="/js/message.js"></script>
+        <script src="/js/utils.js"></script>
+        <script src="/js/room.js"></script>
+    </body>
+</html>
