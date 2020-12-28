@@ -38,7 +38,7 @@ module.exports = class Server {
 
         this.io = socketIO(this.httpServer, {
             cors: {
-                origin: "http://91.160.25.179",
+                origin: "*",
                 methods: ["GET", "POST"]
             }
         });
