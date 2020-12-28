@@ -38,7 +38,7 @@ module.exports = class Server {
 
         this.io = socketIO(this.httpServer, {
             cors: {
-                origin: "*",
+                origin: "http://91.160.25.179",
                 methods: ["GET", "POST"]
             }
         });
@@ -46,7 +46,7 @@ module.exports = class Server {
 
         this.configureApp();
         this.configureRoutes();
-        this.handleSocketConnection();
+        // this.handleSocketConnection();
     }
 
     configureApp() {
@@ -55,13 +55,13 @@ module.exports = class Server {
         this.app.use(express.json());                            // to support JSON-encoded bodies
         this.app.use(express.urlencoded());                      // to support URL-encoded bodies
         
-        const corsOptions = {
-            origin: '*',
-            optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-        }
-        this.app.use(cors(corsOptions))
-        this.app.options('*', cors());
-        
+        // const corsOptions = {
+        //     origin: '*',
+        //     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+        // }
+        // this.app.use(cors(corsOptions))
+        // this.app.options('*', cors());
+
         //add the router folders
         this.app.use(express.static(__dirname + '/../../public'));             // Store all assets, js and css files in public folder.
         this.app.use(express.static(__dirname + '/../../resources/views'));    // Store all HTML files in view folder.
@@ -74,56 +74,56 @@ module.exports = class Server {
         require('./ioController')(this.io, this.roomManager);
     }
 
-    handleSocketConnection() {
-        this.io.on("connection", socket => {
-            const existingSocket = this.activeSockets.find(
-                existingSocket => existingSocket === socket.id
-            );
+    // handleSocketConnection() {
+    //     this.io.on("connection", socket => {
+    //         const existingSocket = this.activeSockets.find(
+    //             existingSocket => existingSocket === socket.id
+    //         );
 
-            if (!existingSocket) {
-                this.activeSockets.push(socket.id);
+    //         if (!existingSocket) {
+    //             this.activeSockets.push(socket.id);
 
-                socket.emit("update-user-list", {
-                    users: this.activeSockets.filter(
-                        existingSocket => existingSocket !== socket.id
-                    )
-                });
+    //             socket.emit("update-user-list", {
+    //                 users: this.activeSockets.filter(
+    //                     existingSocket => existingSocket !== socket.id
+    //                 )
+    //             });
 
-                socket.broadcast.emit("update-user-list", {
-                    users: [socket.id]
-                });
-            }
+    //             socket.broadcast.emit("update-user-list", {
+    //                 users: [socket.id]
+    //             });
+    //         }
 
-            socket.on("call-user", (data) => {
-                socket.to(data.to).emit("call-made", {
-                    offer: data.offer,
-                    socket: socket.id
-                });
-            });
+    //         socket.on("call-user", (data) => {
+    //             socket.to(data.to).emit("call-made", {
+    //                 offer: data.offer,
+    //                 socket: socket.id
+    //             });
+    //         });
 
-            socket.on("make-answer", data => {
-                socket.to(data.to).emit("answer-made", {
-                    socket: socket.id,
-                    answer: data.answer
-                });
-            });
+    //         socket.on("make-answer", data => {
+    //             socket.to(data.to).emit("answer-made", {
+    //                 socket: socket.id,
+    //                 answer: data.answer
+    //             });
+    //         });
 
-            socket.on("reject-call", data => {
-                socket.to(data.from).emit("call-rejected", {
-                    socket: socket.id
-                });
-            });
+    //         socket.on("reject-call", data => {
+    //             socket.to(data.from).emit("call-rejected", {
+    //                 socket: socket.id
+    //             });
+    //         });
 
-            socket.on("disconnect", () => {
-                this.activeSockets = this.activeSockets.filter(
-                    existingSocket => existingSocket !== socket.id
-                );
-                socket.broadcast.emit("remove-user", {
-                    socketId: socket.id
-                });
-            });
-        });
-    }
+    //         socket.on("disconnect", () => {
+    //             this.activeSockets = this.activeSockets.filter(
+    //                 existingSocket => existingSocket !== socket.id
+    //             );
+    //             socket.broadcast.emit("remove-user", {
+    //                 socketId: socket.id
+    //             });
+    //         });
+    //     });
+    // }
 
     listen(callback) {
         this.httpServer.listen(this.port, this.host, () => {
