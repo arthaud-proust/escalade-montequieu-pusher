@@ -11,9 +11,7 @@ module.exports = function(router) {
     //     res.sendFile(path.join(__dirname, '/../views/test2.html'));
     // })
     router.get('/', function(req, res) {
-        let d = new Date(new Date().toLocaleString("fr-FR", {timeZone: "Europe/Vienna"}));
-        console.log(`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`)
-        res.send('ok');
+        res.send('La sincérité est un phénomène de mauvaise foi - Sartre');
     })
 
 };
