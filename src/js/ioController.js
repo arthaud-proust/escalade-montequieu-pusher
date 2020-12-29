@@ -91,7 +91,8 @@ module.exports = function(io, roomManager) {
 
         socket.on('message.new', function (message) {
             // emit message
-            let d = new Date();
+            let d = new Date(new Date().toLocaleString("fr-FR", {timeZone: "Europe/Vienna"}));
+            // let d = new Date().toLocaleString("fr-FR", {timeZone: "Paris/France"});
             socket.roomEmit('messages.update', {
                 type:'message', 
                 author: socket.user.name, 
