@@ -12,6 +12,12 @@ body {
     width: 100vw;
 }
 
+.seenBox-seenTile {
+    height: 20px;
+    width: 20px;
+    border-radius: 20px;
+}
+
 code {
     user-select: all;
     font-size: 1.1em;

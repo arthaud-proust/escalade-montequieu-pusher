@@ -1,4 +1,5 @@
 const Axios = require('axios');
+const User = require('./userClass');
 
 Object.defineProperty(String.prototype, "esc", {
     get: function() {
@@ -28,10 +29,15 @@ module.exports = function(io, roomManager) {
 
     // connexion with token
     io.use(async (socket, next) => {
+        // socket.user = new User({
+        //     uuid: socket.handshake.query.uuid,
+        //     name: socket.handshake.query.name
+        // });
+        // return next()
         let token = socket.handshake.query.token;
-        let user = await getUser(token)
-        if (user) {
-            socket.user = user;
+        let userBase = await getUser(token);
+        if (userBase) {
+            socket.user = new User(userBase);
             return next();
         }
         return next(new Error('authentication error'));
@@ -41,7 +47,7 @@ module.exports = function(io, roomManager) {
         
         // util
         socket.roomEmit = function(...args) {
-            // console.log(...args);
+            console.log(...args);
             io.sockets.to(socket.room.code).emit(...args)
         }
 
@@ -56,15 +62,14 @@ module.exports = function(io, roomManager) {
 
             // add user
             socket.room.seen.addOnce(socket.user.uuid);
-            socket.room.users.addOnce(socket.user);
+            socket.room.users.addOnceObj(socket.user, ['uuid']);
 
             // emit changements
             socket.roomEmit('users.update', socket.room.users.getKeys('name'));
             socket.roomEmit('seen.update', socket.room.getSeen);
             
             // log
-            console.log(`${socket.user.name} joined the room ${data.room}`);
-            console.log(socket.room.users.getKeys('name'));
+            // console.log(`${socket.user.name} joined the room ${data.room}`);
         });
 
 
@@ -77,7 +82,7 @@ module.exports = function(io, roomManager) {
             socket.leave(socket.room.code);
 
             // emit changements
-            socket.roomEmit('users.update', socket.room.getUsers);
+            socket.roomEmit('users.update', socket.room.users.getKeys('name'));
 
             // log
             console.log(`${socket.user.name} left the room ${socket.room.code}`);
@@ -125,6 +130,7 @@ module.exports = function(io, roomManager) {
 
         socket.on('writing.start', function () {
             socket.room.writings.add(socket.user.name);
+            socket.user.recordActivity();
             socket.roomEmit('writings.update', socket.room.getWritings);
         });
 

@@ -9,6 +9,8 @@ body {
     background: #121215;
 }
 
+
+
 code {
     user-select: all;
     font-size: 1.1em;
@@ -291,6 +293,7 @@ main {
 }
 #chat.open {
     display: flex;
+    justify-content: center;
 }
 .container.video {
     display: flex;
@@ -334,7 +337,20 @@ main {
     max-height: 100vh;
 }
 
-
+#seenBox {
+    position: relative;
+    width: 50%;
+    padding-right: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.seenBox-seenTile {
+    height: 30px;
+    width: 30px;
+    border-radius: 30px;
+    margin: 0 3px;
+}
 
 
 .container.messages {

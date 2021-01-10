@@ -1,4 +1,4 @@
-const socket = io.connect(window.location.origin);
+const socket = io.connect(`${window.location.origin}?uuid=${uuid}&name=${username}`);
 
 // const username = "Arthaud";
 const room = "test";

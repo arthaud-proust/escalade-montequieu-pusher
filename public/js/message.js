@@ -59,7 +59,31 @@ socket.on("writings.update", (users) => {
     writings.innerHTML = users.length==0?'':`<span>${users.join()} ${users.length==1?'écrit':'écrivent'}...</span>`
 });
 
+socket.on("seen.update", (usersUuid) => {
+    // bypassed here
+    let index = usersUuid.indexOf(window._uuid);
+    if (index > -1) {
+        usersUuid.splice(index, 1);
+    }
+    // bypassed too
+    index = usersUuid.indexOf(window._last_message_author);
+    if (index > -1) {
+        usersUuid.splice(index, 1);
+    }
 
+    let seenBox = document.getElementById('seenBox');
+    // what's interesting
+    if(usersUuid.length>0) {
+        let usersTiles = "";
+        for (let i=0; (i<usersUuid.length+1)&&(i<3); i++) {
+            usersTiles+='<img src="https://eu.ui-avatars.com/api/?name='+usersUuid.shift()+'" class="seenBox-seenTile">';
+        }
+        seenBox.innerHTML = `Vu par <div id="seenBox-seen">${usersTiles}</div> ${usersUuid.length>0?'+'+usersUuid.length:''}`;
+    } else {
+        seenBox.innerHTML = ''
+    }
+    
+});
 
 window.onunload = window.onbeforeunload = () => {
     socket.emit('leave', {room, username: username});
