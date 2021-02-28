@@ -61,7 +61,7 @@ module.exports = function(io, roomManager) {
             socket.join(data.room);
 
             // add user
-            // socket.room.seen.addOnce(socket.user.uuid);
+            socket.room.seen.addOnce(socket.user.uuid);
             socket.room.users.addOnceObj(socket.user, ['uuid']);
 
             // emit changements
