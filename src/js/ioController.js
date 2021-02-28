@@ -61,7 +61,7 @@ module.exports = function(io, roomManager) {
             socket.join(data.room);
 
             // add user
-            socket.room.seen.addOnce(socket.user.uuid);
+            // socket.room.seen.addOnce(socket.user.uuid);
             socket.room.users.addOnceObj(socket.user, ['uuid']);
 
             // emit changements
@@ -107,10 +107,11 @@ module.exports = function(io, roomManager) {
             });
 
             // refresh seen
-            socket.room.seen.set(socket.room.users.getKeys('uuid'));
+            // socket.room.seen.set(socket.room.users.getKeys('uuid'));
+            socket.room.seen.empty();
 
             // emit new seen list
-            socket.roomEmit('seen.update', socket.room.getSeen);
+            // socket.roomEmit('seen.update', socket.room.getSeen);
 
             Axios.post(`${process.env.SITE_URL}/api/sendmessage?api_token=${socket.user.api_token}`, {
                 forum: socket.room.code,
@@ -127,6 +128,11 @@ module.exports = function(io, roomManager) {
             })
         });
 
+        socket.on('seen', function () {
+            socket.room.seen.add(socket.user.uuid);
+            socket.user.recordActivity();
+            socket.roomEmit('seen.update', socket.room.getSeen);
+        });
 
         socket.on('writing.start', function () {
             socket.room.writings.add(socket.user.name);

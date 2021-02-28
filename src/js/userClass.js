@@ -13,8 +13,8 @@ module.exports = class User {
         // boolean
         // if user lastActivity is at least 1 min ago
 
-        // i.e:  now - lastActivity < 60 000 millisecond (or 60 second)
-        return Date.now() - this.lastActivity < 60000
+        // i.e:  now - lastActivity < 60 second
+        return Date.now() - this.lastActivity < 60000 // in millisecons
     }
 
     get lastActivity() {
