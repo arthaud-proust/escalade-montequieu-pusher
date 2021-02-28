@@ -129,7 +129,7 @@ module.exports = function(io, roomManager) {
         });
 
         socket.on('seen', function () {
-            socket.room.seen.add(socket.user.uuid);
+            socket.room.seen.addOnce(socket.user.uuid);
             socket.user.recordActivity();
             socket.roomEmit('seen.update', socket.room.getSeen);
         });
