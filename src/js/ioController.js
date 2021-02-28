@@ -109,6 +109,7 @@ module.exports = function(io, roomManager) {
             // refresh seen
             // socket.room.seen.set(socket.room.users.getKeys('uuid'));
             socket.room.seen.empty();
+            socket.roomEmit('seen.update', socket.room.getSeen);
 
             // emit new seen list
             // socket.roomEmit('seen.update', socket.room.getSeen);
